@@ -695,7 +695,7 @@ let test = {
 
 var object = {};
 let count =0;
-for (let state in test) {
+for (let state in allData) {
     
     let stateCode = states.indexOf(state);
     object[state] = {}
