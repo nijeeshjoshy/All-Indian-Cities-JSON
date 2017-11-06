@@ -2,6 +2,7 @@ import * as https from 'https';
 import * as request from 'request'
 import * as Promise from 'bluebird';
 import * as fs from 'fs';
+import * as pinExtractor from './getPincode';
 
 let url = 'https://www.mapsofindia.com/pincode/data.php'
 var postDate = 'get="state"';
@@ -685,11 +686,17 @@ var allData = {
     }
 }
 
+let test = {
+    'Tamil Nadu':'',
+    'Kerala':''
+}
+
 
 
 var object = {};
 let count =0;
-for (let state in allData) {
+for (let state in test) {
+    
     let stateCode = states.indexOf(state);
     object[state] = {}
     for (let distrct in allData[state]) {
@@ -700,11 +707,30 @@ for (let state in allData) {
             // console.log(req);
                 makerRequest(req)
                     .then(res=>{
-                        object[state][distrct]=res;
-                        count++;
-                        if(count==602){
-                            fs.writeFile('allCities.json',JSON.stringify(object),console.log)
+
+                        object[state][distrct]={};
+                        
+                        for(let m=0;m<res.length;m++){
+                            object[state][distrct][res[m]] = '';
+                            let stateUrl= replaceAll(state.toLowerCase(),' ','-');
+                            let distUrl = replaceAll(distrct.toLowerCase(),' ','-');
+                            let cityUrl = replaceAll(res[m].toLowerCase(),' ','-')
+
+                            let pinurl = `https://www.mapsofindia.com/pincode/india/${stateUrl}/${distUrl}/${cityUrl}.html`
+                            
+                            pinExtractor(pinurl,p=>{
+                                object[state][distrct][res[m]] = p;
+                                console.log(p)
+                            })
+                            count++;
+                            if(count == 17047){
+                                fs.writeFile('allCitiesTN-KER.json',JSON.stringify(object),console.log);
+                            }
                         }
+                        // 
+                        // if(count==602){
+                        //     fs.writeFile('allCities.json',JSON.stringify(object),console.log)
+                        // }
                     })
                 
         },200)
@@ -712,7 +738,7 @@ for (let state in allData) {
             
                 
     }
-    object[state] = {}
+    // object[state] = {}
 }
 
 
@@ -737,15 +763,11 @@ function makerRequest(data) {
                     
                     body.replace(/\\/g, "")
                     body = replaceAll(body, "'", '"');
-                    
-    
-                    
                     body = body.split('*');
                     body = JSON.parse(body[0])
-    
-                    
+                    resolve(body)
                 }
-                resolve(body)
+                
             }
         );
     })
