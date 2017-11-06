@@ -1,0 +1,21 @@
+{
+  "name": "migration-db",
+  "version": "1.0.0",
+  "description": "Package used to migrate from old databse to new database",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js",
+    "start": "node index.js"
+  },
+  "author": "Nijeesh KJ",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.145.0",
+    "bluebird": "^3.5.1",
+    "cheerio": "^1.0.0-rc.2",
+    "image-downloader": "^3.3.0",
+    "orientjs": "^2.2.7",
+    "request": "^2.83.0",
+    "shelljs": "^0.7.8"
+  }
+}
